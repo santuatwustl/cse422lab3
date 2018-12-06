@@ -18,8 +18,15 @@ do_fault(struct vm_area_struct * vma,
          unsigned long           fault_address)
 {
 
-
-    
+    struct page *new_page = alloc_page(GFP_KERNEL);
+    if(!new_page){
+        return VM_FAULT_OOM;
+    } 
+    unsigned long page_number = page_to_pfn(new_page);
+    unsigned long aligned_vaddress = PAGE_ALIGN(fault_address);
+    int remaped = remap_pfn_range(vma, aligned_vaddress, page_number, PAGE_SIZE, vma->vm_page_prot);
+    printk("page number: %lu\n remapped number: %d\n aligned_vaddress: %lu\n", page_number, remaped, aligned_vaddress);
+    if(!remaped) return VM_FAULT_NOPAGE;
     printk(KERN_INFO "paging_vma_fault() invoked: took a page fault at VA 0x%lx\n", fault_address);
     return VM_FAULT_SIGBUS;
 }
@@ -29,7 +36,7 @@ static int
 paging_vma_fault(struct vm_area_struct * vma,
                  struct vm_fault       * vmf)
 {
-    unsigned long fault_address = (unsigned long)vmf->virtual_address
+    unsigned long fault_address = (unsigned long)vmf->virtual_address;
 #else
 static int
 paging_vma_fault(struct vm_fault * vmf)
