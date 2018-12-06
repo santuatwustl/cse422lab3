@@ -1,3 +1,4 @@
-1. Yaowen Wang wang.yaowen@wustl.edu
-2.
-3.
+Yaowen Wang wang.yaowen@wustl.edu
+1. Bus error
+2. 
+3. Multiplication done
